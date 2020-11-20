@@ -3,11 +3,11 @@
   *------
   * BGA framework: © Gregory Isabelli <gisabelli@boardgamearena.com> & Emmanuel Colin <ecolin@boardgamearena.com>
   * euchreajm implementation : © <Your name here> <Your email address here>
-  * 
+  *
   * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
   * See http://en.boardgamearena.com/#!doc/Studio for more information.
   * -----
-  * 
+  *
   * euchreajm.game.php
   *
   * This is the main file for your game logic.
@@ -31,11 +31,11 @@ class euchreajm extends Table
         //  the corresponding ID in gameoptions.inc.php.
         // Note: afterwards, you can get/set the global variables with getGameStateValue/setGameStateInitialValue/setGameStateValue
         parent::__construct();
-        
-        self::initGameStateLabels( array( 
-                   "currentHandType" => 10, 
+
+        self::initGameStateLabels( array(
+                   "currentHandType" => 10,
                    "trickColor" => 11,  // Card suit, 1 to 4
-                   //"alreadyPlayedHearts" => 12,
+                   "alreadyPlayedHearts" => 12,
         ) );
 
         $this->cards = self::getNew( "module.common.deck" );
@@ -50,19 +50,19 @@ class euchreajm extends Table
 
     /*
         setupNewGame:
-        
+
         This method is called only once, when a new game is launched.
         In this method, you must setup the game according to the game rules, so that
         the game is ready to be played.
     */
     protected function setupNewGame( $players, $options = array() )
-    {    
+    {
         // Set the colors of the players with HTML color code
         // The default below is red/green/blue/orange/brown
         // The number of colors defined here must correspond to the maximum number of players allowed for the gams
         $gameinfos = self::getGameinfos();
         $default_colors = $gameinfos['player_colors'];
- 
+
         // Create players
         // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialize it there.
         $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
@@ -76,7 +76,7 @@ class euchreajm extends Table
         self::DbQuery( $sql );
         self::reattributeColorsBasedOnPreferences( $players, $gameinfos['player_colors'] );
         self::reloadPlayersBasicInfos();
-        
+
         /************ Start the game initialization *****/
 
         // Init global values with their initial values
@@ -87,10 +87,10 @@ class euchreajm extends Table
         //                   2 = give 3 cards to player opposite
         //                   3 = keep cards
         self::setGameStateInitialValue( 'currentHandType', 0 );
-        
+
         // Set current trick color to zero (= no trick color)
         self::setGameStateInitialValue( 'trickColor', 0 );
-        
+
   		// Create cards
         $cards = array ();
         foreach ( $this->colors as $color_id => $color )
@@ -102,7 +102,7 @@ class euchreajm extends Table
                 $cards [] = array ('type' => $color_id,'type_arg' => $value,'nbr' => 1 );
             }
         }
-        
+
         $this->cards->createCards( $cards, 'deck' );
 
         // TODO: setup the initial game situation here
@@ -113,8 +113,8 @@ class euchreajm extends Table
         $players = self::loadPlayersBasicInfos();
         foreach ( $players as $player_id => $player ) {
             $cards = $this->cards->pickCards(5, 'deck', $player_id);
-        } 
-       
+        }
+
 
         // Activate first player (which is in general a good idea :) )
         $this->activeNextPlayer();
@@ -123,10 +123,10 @@ class euchreajm extends Table
     }
 
     /*
-        getAllDatas: 
-        
+        getAllDatas:
+
         Gather all informations about current game situation (visible by the current player).
-        
+
         The method is called each time the game interface is displayed to a player, ie:
         _ when the game starts
         _ when a player refreshes the game page (F5)
@@ -134,33 +134,33 @@ class euchreajm extends Table
     protected function getAllDatas()
     {
         $result = array();
-    
+
         $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
-    
+
         // Get information about players
         // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
         $sql = "SELECT player_id id, player_score score FROM player ";
         $result['players'] = self::getCollectionFromDb( $sql );
-  
+
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
         // Cards in player hand
         $result['hand'] = $this->cards->getCardsInLocation( 'hand', $current_player_id );
-        
+
         // Cards played on the table
         $result['cardsontable'] = $this->cards->getCardsInLocation( 'cardsontable' );
-  
+
         return $result;
     }
 
     /*
         getGameProgression:
-        
+
         Compute and return the current game progression.
         The number returned must be an integer beween 0 (=the game just started) and
         100 (= the game is finished or almost finished).
-    
-        This method is called each time we are in a game state with the "updateGameProgression" property set to true 
+
+        This method is called each time we are in a game state with the "updateGameProgression" property set to true
         (see states.inc.php)
     */
     function getGameProgression()
@@ -173,7 +173,7 @@ class euchreajm extends Table
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Utility functions
-////////////    
+////////////
 
     /*
         In this space, you can put any utility methods useful for your game logic
@@ -183,7 +183,7 @@ class euchreajm extends Table
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Player actions
-//////////// 
+////////////
 
     /*
         Each time a player is doing some game action, one of the methods below is called.
@@ -191,19 +191,19 @@ class euchreajm extends Table
     */
 
     /*
-    
+
     Example:
 
     function playCard( $card_id )
     {
         // Check that this is the player's turn and that it is a "possible action" at this game state (see states.inc.php)
-        self::checkAction( 'playCard' ); 
-        
+        self::checkAction( 'playCard' );
+
         $player_id = self::getActivePlayerId();
-        
-        // Add your game logic to play a card there 
+
+        // Add your game logic to play a card there
         ...
-        
+
         // Notify all players about the card played
         self::notifyAllPlayers( "cardPlayed", clienttranslate( '${player_name} plays ${card_name}' ), array(
             'player_id' => $player_id,
@@ -211,12 +211,18 @@ class euchreajm extends Table
             'card_name' => $card_name,
             'card_id' => $card_id
         ) );
-          
+
     }
-    
+
     */
 
-    
+    function playCard($card_id) {
+        self::checkAction("playCard");
+        $player_id = self::getActivePlayerId();
+        throw new BgaUserException(self::_("Not implemented: ") . "$player_id plays $card_id");
+    }
+
+
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state arguments
 ////////////
@@ -228,21 +234,25 @@ class euchreajm extends Table
     */
 
     /*
-    
+
     Example for game state "MyGameState":
-    
+
     function argMyGameState()
     {
         // Get some values from the current game situation in database...
-    
+
         // return values:
         return array(
             'variable1' => $value1,
             'variable2' => $value2,
             ...
         );
-    }    
+    }
     */
+
+    function argGiveCards() {
+        return array ();
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
@@ -252,19 +262,70 @@ class euchreajm extends Table
         Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).
         The action method of state X is called everytime the current game state is set to X.
     */
-    
+
     /*
-    
+
     Example for game state "MyGameState":
 
     function stMyGameState()
     {
         // Do some stuff ...
-        
+
         // (very often) go to another gamestate
         $this->gamestate->nextState( 'some_gamestate_transition' );
-    }    
+    }
     */
+
+    function stNewHand() {
+        // Take back all cards (from any location => null) to deck
+        $this->cards->moveAllCardsInLocation(null, "deck");
+        $this->cards->shuffle('deck');
+        // Deal 13 cards to each players
+        // Create deck, shuffle it and give 5 initial cards
+        $players = self::loadPlayersBasicInfos();
+        foreach ( $players as $player_id => $player ) {
+            $cards = $this->cards->pickCards(5, 'deck', $player_id);
+            // Notify player about his cards
+            self::notifyPlayer($player_id, 'newHand', '', array ('cards' => $cards ));
+        }
+        self::setGameStateValue('alreadyPlayedHearts', 0);
+        $this->gamestate->nextState("");
+    }
+
+    function stNewTrick() {
+        // New trick: active the player who wins the last trick, or the player who own the club-2 card
+        // Reset trick color to 0 (= no color)
+        self::setGameStateInitialValue('trickColor', 0);
+        $this->gamestate->nextState();
+    }
+
+    function stNextPlayer() {
+        // Active next player OR end the trick and go to the next trick OR end the hand
+        if ($this->cards->countCardInLocation('cardsontable') == 4) {
+            // This is the end of the trick
+            // Move all cards to "cardswon" of the given player
+            $best_value_player_id = self::activeNextPlayer(); // TODO figure out winner of trick
+            $this->cards->moveAllCardsInLocation('cardsontable', 'cardswon', null, $best_value_player_id);
+
+            if ($this->cards->countCardInLocation('hand') == 0) {
+                // End of the hand
+                $this->gamestate->nextState("endHand");
+            } else {
+                // End of the trick
+                $this->gamestate->nextState("nextTrick");
+            }
+        } else {
+            // Standard case (not the end of the trick)
+            // => just active the next player
+            $player_id = self::activeNextPlayer();
+            self::giveExtraTime($player_id);
+            $this->gamestate->nextState('nextPlayer');
+        }
+    }
+
+    function stEndHand() {
+        $this->gamestate->nextState("nextHand");
+    }
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Zombie
@@ -272,15 +333,15 @@ class euchreajm extends Table
 
     /*
         zombieTurn:
-        
+
         This method is called each time it is the turn of a player who has quit the game (= "zombie" player).
         You can do whatever you want in order to make sure the turn of this player ends appropriately
         (ex: pass).
-        
+
         Important: your zombie code will be called when the player leaves the game. This action is triggered
         from the main site and propagated to the gameserver from a server, not from a browser.
         As a consequence, there is no current player associated to this action. In your zombieTurn function,
-        you must _never_ use getCurrentPlayerId() or getCurrentPlayerName(), otherwise it will fail with a "Not logged" error message. 
+        you must _never_ use getCurrentPlayerId() or getCurrentPlayerName(), otherwise it will fail with a "Not logged" error message.
     */
 
     function zombieTurn( $state, $active_player )
@@ -300,34 +361,34 @@ class euchreajm extends Table
         if ($state['type'] === "multipleactiveplayer") {
             // Make sure player is in a non blocking status for role turn
             $this->gamestate->setPlayerNonMultiactive( $active_player, '' );
-            
+
             return;
         }
 
         throw new feException( "Zombie mode not supported at this game state: ".$statename );
     }
-    
+
 ///////////////////////////////////////////////////////////////////////////////////:
 ////////// DB upgrade
 //////////
 
     /*
         upgradeTableDb:
-        
+
         You don't have to care about this until your game has been published on BGA.
         Once your game is on BGA, this method is called everytime the system detects a game running with your old
         Database scheme.
         In this case, if you change your Database scheme, you just have to apply the needed changes in order to
         update the game database and allow the game to continue to run with your new version.
-    
+
     */
-    
+
     function upgradeTableDb( $from_version )
     {
         // $from_version is the current version of this game database, in numerical form.
         // For example, if the game was running with a release of your game named "140430-1345",
         // $from_version is equal to 1404301345
-        
+
         // Example:
 //        if( $from_version <= 1404301345 )
 //        {
@@ -348,5 +409,5 @@ class euchreajm extends Table
 //
 
 
-    }    
+    }
 }
