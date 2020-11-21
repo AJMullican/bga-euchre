@@ -67,6 +67,28 @@
     }
 */
 
+/* Turn up card */
+
+.turnuptable {
+    position: relative;
+    text-align: center;
+    left: 0px;
+    top: 0px;
+    //width: 180px;
+    //height: 130px;
+
+    background-color: green;
+    height: 500px;
+    width: 80%;
+    border-radius: 10%;
+    margin: 0 auto;
+    border: 1em solid black;
+}
+
+.turnuptablecard {
+    position:relative;
+}
+
 
 .playertablecard {
     display: inline-block;
@@ -83,7 +105,7 @@
     position: absolute;
     width: 72px;
     height: 96px;
-    background-image: url('img/cards.jpg'); 
+    background-image: url('img/cards.jpg');
 }
 
 /** Table layout **/
@@ -124,4 +146,5 @@
     right: 0px;
     top: 50%;
     margin-top: -55px; /* half of 130 */
+
 

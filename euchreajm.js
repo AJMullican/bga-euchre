@@ -59,13 +59,48 @@ function (dojo, declare) {
                 // TODO: Setting up players boards if needed
             }
             
+            var turnupTable = document.getElementById("turnuptable");
+            //var turnupTable = $('turnuptable').innerHTML;
+            var style = window.getComputedStyle(turnupTable, null);
+            console.log("TURNUP TABLE STYLE: ");
+            console.log(style);
+
+            var aPlayerTable = document.getElementsByClassName("playertable");
+            style = window.getComputedStyle(aPlayerTable[0], null);
+
+            var aPlayerTable = document.getElementsByClassName("playertablecard");
+            style = window.getComputedStyle(aPlayerTable[0], null);
+
+            var stateId = parseInt(gamedatas.gamestate.id);
+            console.log("stateId: " + stateId);
+            if( stateId <= 30 )   //everything up to Dealer Replace
+            {
+                for( var i=0; i<aPlayerTable.length; i++ )
+                {
+                  aPlayerTable[i].style.display = 'none';
+                }
+            }
+            else
+            {
+                turnupTable.style.display = 'none';
+            }
+                for( var i=0; i<aPlayerTable.length; i++ )
+                {
+                  aPlayerTable[i].style.display = 'none';
+                }
+                //turnupTable.style.display = 'block';
+            console.log("playertable display: none");
+            dojo.query( '.playertable' ).style( 'display', 'none' );
+            dojo.query( '.turnuptable' ).style( 'display', 'block' );
+
             // TODO: Set up your game interface here, according to "gamedatas"
 
-    		// Player hand
-    		this.playerHand = new ebg.stock(); // new stock object for hand
-    		this.playerHand.create( this, $('myhand'), this.cardwidth, this.cardheight );
+            // Player hand
+            this.playerHand = new ebg.stock(); // new stock object for hand
+            this.playerHand.create( this, $('myhand'), this.cardwidth, this.cardheight );
  
             this.playerHand.image_items_per_row = 13; // 13 images per row
+            this.playerHand.centerItems = true;
 
 
             // Create cards types:
@@ -76,6 +111,61 @@ function (dojo, declare) {
                     this.playerHand.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.jpg', card_type_id);
                 }
             }
+            //  Spades trump
+            this.playerHand.changeItemsWeight({
+                                                 0 : 39,
+                                                    1 : 40,
+                                                    2 : 41,
+                                                    3 : 42,
+                                                    4 : 43,
+                                                    5 : 44,
+                                                    6 : 45,
+                                                    7 : 46,
+                                                    8 : 47,
+                                                    9 : 48,
+                                                   10 : 49,
+                                                   11 : 50,
+                                                   12 : 51,
+                                                   13 : 26,
+                                                   14 : 27,
+                                                   15 : 28,
+                                                   16 : 29,
+                                                   17 : 30,
+                                                   18 : 31,
+                                                   19 : 32,
+                                                   20 : 33,
+                                                   21 : 34,
+                                                   22 : 35,
+                                                   23 : 36,
+                                                   24 : 37,
+                                                   25 : 38,
+                                                   26 : 13,
+                                                   27 : 14,
+                                                   28 : 15,
+                                                   29 : 16,
+                                                   30 : 17,
+                                                   31 : 18,
+                                                   32 : 19,
+                                                   33 : 20,
+                                                   34 : 21,
+                                                   35 : 22,
+                                                   36 : 23,
+                                                   37 : 24,
+                                                   38 : 25,
+                                                   39 : 0,
+                                                   40 : 1,
+                                                   41 : 2,
+                                                   42 : 3,
+                                                   43 : 4,
+                                                   44 : 5,
+                                                   45 : 6,
+                                                   46 : 7,
+                                                   47 : 8,
+                                                   48 : 9,
+                                                   49 : 10,
+                                                   50 : 11,
+                                                   51 : 12
+                                                        });
 
             // Cards in player's hand
             for ( var i in this.gamedatas.hand) {
@@ -94,7 +184,7 @@ function (dojo, declare) {
                 this.playCardOnTable(player_id, color, value, card.id);
             }
 
-			dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
+            dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
 
 
             // Setup game notifications to handle (see "setupNotifications" method below)
@@ -199,12 +289,12 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
 
         // Get card unique identifier based on its color and value
         getCardUniqueId : function(color, value)
-		{
+        {
             return (color - 1) * 13 + (value - 2);
         },
 
         playCardOnTable : function(player_id, color, value, card_id)
-		{
+        {
             // player_id => direction
             dojo.place(this.format_block('jstpl_cardontable', {
                 x : this.cardwidth * (value - 2),
@@ -324,7 +414,7 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
             this.notifqueue.setSynchronous( 'trickWin', 1000 );
             dojo.subscribe( 'giveAllCardsToPlayer', this, "notif_giveAllCardsToPlayer" );
 
-			dojo.subscribe( 'newScores', this, "notif_newScores" );
+            dojo.subscribe( 'newScores', this, "notif_newScores" );
         },
 
         notif_newHand : function(notif) {

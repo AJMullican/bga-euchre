@@ -53,7 +53,7 @@
                     "DIR" => $dir ));
         }
         // this will make our My Hand text translatable
-        $this->tpl['MY_HAND'] = self::_("My hand");
+        $this->tpl['MY_HAND'] = self::_("My great hand");
 
         /*
         

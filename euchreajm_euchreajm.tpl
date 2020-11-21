@@ -38,6 +38,15 @@
     </div>
     <!-- END player -->
 
+    <div class="turnuptable whiteblock" id="turnuptable">
+        <div class="turnuptablename" style="color:#000000">
+        </div>
+        <div class="turnuptablecard">
+          <div id="turn_up_card"></div>
+          <div id="turnuptabledealer"></div>
+        </div>
+    </div>
+
 </div>
 
 <div id="myhand_wrap" class="whiteblock">
