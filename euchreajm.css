@@ -74,9 +74,6 @@
     text-align: center;
     left: 0px;
     top: 0px;
-    //width: 180px;
-    //height: 130px;
-
     background-color: green;
     height: 500px;
     width: 80%;
@@ -112,13 +109,62 @@
 
 #playertables {
     position: relative;
-    width: 710px;
-    height: 340px;
+    text-align: left;
+    left: 0px;
+    top: 0px;
+    background-color: green;
+    height: 600px;
+    width: 600px;
+    border-radius: 80px;
+    margin-left: 20px;
+    margin-top: 20px;
+    border: 16px solid black;
+}
+
+#myhand_wrap {
+	position: absolute;
+	width: 420px;
+	bottom: 52px;
+	right: 50%;
+	margin-right: -210px;
 }
 
 .playertablename {
     font-weight: bold;
 }
+
+.playername {
+	background-color: tan;
+    position: absolute;
+    text-align: center;
+    width: 120px;
+    height: 16px;
+    border-radius: 8px;
+    border: 2px solid black;
+}
+
+.playername_N {
+    left: 50%;
+    top: 0px;
+	alight-text: center;
+    margin-left: -76px; /* half of 120 + 16 border */
+}
+.playername_S {
+    left: 50%;
+    bottom: 0px;
+    margin-left: -76px; /* half of 120 + 16 border */
+}
+.playername_W {
+    left: 8px;
+    top: 120px;
+    //margin-top: -8px; /* half of 16 */
+}
+.playername_E {
+    right: 8px;
+    top: 120px;
+    //margin-top: -8px; /* half of 16 */
+}
+
 
 .playertable {
     position: absolute;
@@ -146,5 +192,7 @@
     right: 0px;
     top: 50%;
     margin-top: -55px; /* half of 130 */
+}
 
+}
 

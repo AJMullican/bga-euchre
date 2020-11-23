@@ -38,6 +38,16 @@
     </div>
     <!-- END player -->
 
+    <!-- BEGIN playername -->
+    <div class="playername whiteblock playername_{DIR}">
+        <div class="playertablename" style="color:#{PLAYER_COLOR}">
+            {PLAYER_NAME}
+        </div>
+        <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
+        </div>
+	</div>
+    <!-- END playername -->
+
     <div class="turnuptable whiteblock" id="turnuptable">
         <div class="turnuptablename" style="color:#000000">
         </div>
@@ -47,12 +57,11 @@
         </div>
     </div>
 
-</div>
-
-<div id="myhand_wrap" class="whiteblock">
-    <h3>{MY_HAND}</h3>
-    <div id="myhand">
+	<div id="myhand_wrap">
+		<div id="myhand">
+        </div>
     </div>
+
 </div>
 
 <script type="text/javascript">

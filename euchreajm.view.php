@@ -52,8 +52,19 @@
                     "PLAYER_COLOR" => $players [$player_id] ['player_color'],
                     "DIR" => $dir ));
         }
+        $directions = array( 'S', 'W', 'N', 'E' );
+        $this->page->begin_block($template, "playername");
+        foreach ( $players as $player_id => $info ) {
+            $dir = array_shift($directions);
+            $this->page->insert_block("playername", array ("PLAYER_ID" => $player_id,
+                    "PLAYER_NAME" => $players [$player_id] ['player_name'],
+                    "PLAYER_COLOR" => $players [$player_id] ['player_color'],
+                    "DIR" => $dir ));
+        }
+
         // this will make our My Hand text translatable
-        $this->tpl['MY_HAND'] = self::_("My great hand");
+		//  Use for player name??
+        //$this->tpl['MY_HAND'] = self::_("My great hand");
 
         /*
         

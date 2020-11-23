@@ -86,12 +86,14 @@ function (dojo, declare) {
             }
                 for( var i=0; i<aPlayerTable.length; i++ )
                 {
-                  aPlayerTable[i].style.display = 'none';
+                  aPlayerTable[i].style.display = 'block';
                 }
                 //turnupTable.style.display = 'block';
             console.log("playertable display: none");
             dojo.query( '.playertable' ).style( 'display', 'none' );
-            dojo.query( '.turnuptable' ).style( 'display', 'block' );
+            dojo.query( '.playername' ).style( 'display', 'block' );
+            //dojo.query( '.turnuptable' ).style( 'display', 'block' );
+            //dojo.query( '#myhand' ).style( 'display', 'block' );
 
             // TODO: Set up your game interface here, according to "gamedatas"
 
