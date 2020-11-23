@@ -39,20 +39,24 @@
 
         /*********** Place your code below:  ************/
 
-  	$template = self::getGameName() . "_" . self::getGameName();
+       $template = self::getGameName() . "_" . self::getGameName();
         
+        //borrowed from hearts
+        // Arrange players so that I am on south
+        $player_to_dir = $this->game->getPlayersToDirection();
+
         $directions = array( 'S', 'W', 'N', 'E' );
         
         // this will inflate our player block with actual players data
         $this->page->begin_block($template, "player");
-        foreach ( $players as $player_id => $info ) {
+        foreach ( $player_to_dir as $player_id => $info ) {
             $dir = array_shift($directions);
             $this->page->insert_block("player", array ("PLAYER_ID" => $player_id,
                     "DIR" => $dir ));
         }
         $directions = array( 'S', 'W', 'N', 'E' );
         $this->page->begin_block($template, "playername");
-        foreach ( $players as $player_id => $info ) {
+        foreach ( $player_to_dir as $player_id => $info ) {
             $dir = array_shift($directions);
             $this->page->insert_block("playername", array ("PLAYER_ID" => $player_id,
                     "PLAYER_NAME" => $players [$player_id] ['player_name'],

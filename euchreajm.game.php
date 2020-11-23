@@ -109,7 +109,7 @@ class euchreajm extends Table
 
         // Shuffle deck
         $this->cards->shuffle('deck');
-        // Deal 5 cards to each players
+        // Deal 5 cards to each player
         $players = self::loadPlayersBasicInfos();
         foreach ( $players as $player_id => $player ) {
             $cards = $this->cards->pickCards(5, 'deck', $player_id);
@@ -178,6 +178,41 @@ class euchreajm extends Table
     /*
         In this space, you can put any utility methods useful for your game logic
     */
+
+  // Return players => direction (N/S/E/W) from the point of view
+  //  of current player (current player must be on south)
+  function getPlayersToDirection()
+  {
+    $result = array();
+
+    $players = self::loadPlayersBasicInfos();
+    $nextPlayer = self::createNextPlayerTable( array_keys( $players ) ); 
+
+    $current_player = self::getCurrentPlayerId();
+
+    $directions = array( 'S', 'W', 'N', 'E' );
+
+    if( ! isset( $nextPlayer[ $current_player ] ) )
+    {
+      // Spectator mode: take any player for south
+      $player_id = $nextPlayer[0];
+      $result[ $player_id ] = array_shift( $directions );
+    }
+    else
+    {
+      // Normal mode: current player is on south
+      $player_id = $current_player;
+      $result[ $player_id ] = array_shift( $directions );
+    }
+
+    while( count( $directions ) > 0 )
+    {
+      $player_id = $nextPlayer[ $player_id ];
+      $result[ $player_id ] = array_shift( $directions );
+    }
+    return $result;
+  }
+
 
 
 
@@ -296,7 +331,7 @@ class euchreajm extends Table
         // Take back all cards (from any location => null) to deck
         $this->cards->moveAllCardsInLocation(null, "deck");
         $this->cards->shuffle('deck');
-        // Deal 13 cards to each players
+        // Deal 5 cards to each player
         // Create deck, shuffle it and give 5 initial cards
         $players = self::loadPlayersBasicInfos();
         foreach ( $players as $player_id => $player ) {

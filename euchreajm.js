@@ -59,10 +59,10 @@ function (dojo, declare) {
                 // TODO: Setting up players boards if needed
             }
             
-            var turnupTable = document.getElementById("turnuptable");
-            //var turnupTable = $('turnuptable').innerHTML;
-            var style = window.getComputedStyle(turnupTable, null);
-            console.log("TURNUP TABLE STYLE: ");
+            var trumpTable = document.getElementById("trumptable");
+            //var trumpTable = $('trumptable').innerHTML;
+            var style = window.getComputedStyle(trumpTable, null);
+            console.log("TRUMP TABLE STYLE: ");
             console.log(style);
 
             var aPlayerTable = document.getElementsByClassName("playertable");
@@ -82,17 +82,17 @@ function (dojo, declare) {
             }
             else
             {
-                turnupTable.style.display = 'none';
+                trumpTable.style.display = 'none';
             }
                 for( var i=0; i<aPlayerTable.length; i++ )
                 {
                   aPlayerTable[i].style.display = 'block';
                 }
-                //turnupTable.style.display = 'block';
+                //trumpTable.style.display = 'block';
             console.log("playertable display: none");
             dojo.query( '.playertable' ).style( 'display', 'block' );
             dojo.query( '.playername' ).style( 'display', 'block' );
-            dojo.query( '.turnuptable' ).style( 'display', 'block' );
+            dojo.query( '.trumptable' ).style( 'display', 'block' );
             //dojo.query( '#myhand' ).style( 'display', 'block' );
 
             // TODO: Set up your game interface here, according to "gamedatas"
