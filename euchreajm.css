@@ -71,15 +71,12 @@
 
 .turnuptable {
     position: relative;
-    text-align: center;
-    left: 0px;
-    top: 0px;
-    background-color: green;
-    height: 500px;
-    width: 80%;
-    border-radius: 10%;
-    margin: 0 auto;
-    border: 1em solid black;
+    left: 50%;
+    top: 172px;
+    width: 72px;
+    height: 96px;
+    margin-left: -52px;
+	//margin-top: -64px;
 }
 
 .turnuptablecard {
@@ -88,9 +85,9 @@
 
 
 .playertablecard {
-    display: inline-block;
-    position: relative;
-    margin-top: 5px;
+    //display: inline-block;
+    position: absolute;
+    //margin-top: 5px;
     width: 72px;
     height: 96px;
     /* we remove background-image here */
@@ -114,7 +111,7 @@
     top: 0px;
     background-color: green;
     height: 600px;
-    width: 600px;
+    width: 480px;
     border-radius: 80px;
     margin-left: 20px;
     margin-top: 20px;
@@ -168,30 +165,29 @@
 
 .playertable {
     position: absolute;
-    text-align: center;
-    width: 180px;
-    height: 130px;
+    width: 72px;
+    height: 96px;
 }
 
 .playertable_N {
     left: 50%;
-    top: 0px;
-    margin-left: -90px; /* half of 180 */
+    top: 52px;
+    margin-left: -52px;
 }
 .playertable_S {
     left: 50%;
-    bottom: 0px;
-    margin-left: -90px; /* half of 180 */
+    bottom: 156px;
+    margin-left: -52px;
 }
 .playertable_W {
-    left: 0px;
-    top: 50%;
-    margin-top: -55px; /* half of 130 */
+    left: 32px;
+    top: 172px;
+    //margin-top: -64px;
 }
 .playertable_E {
-    right: 0px;
-    top: 50%;
-    margin-top: -55px; /* half of 130 */
+    right: 32px;
+    top: 172px;
+    //margin-top: -64px;
 }
 
 }

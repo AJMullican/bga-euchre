@@ -30,9 +30,6 @@
 
     <!-- BEGIN player -->
     <div class="playertable whiteblock playertable_{DIR}">
-        <div class="playertablename" style="color:#{PLAYER_COLOR}">
-            {PLAYER_NAME}
-        </div>
         <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
         </div>
     </div>
@@ -42,8 +39,6 @@
     <div class="playername whiteblock playername_{DIR}">
         <div class="playertablename" style="color:#{PLAYER_COLOR}">
             {PLAYER_NAME}
-        </div>
-        <div class="playertablecard" id="playertablecard_{PLAYER_ID}">
         </div>
 	</div>
     <!-- END playername -->
