@@ -39,7 +39,7 @@
 
         /*********** Place your code below:  ************/
 
-       $template = self::getGameName() . "_" . self::getGameName();
+      	$template = self::getGameName() . "_" . self::getGameName();
         
         //borrowed from hearts
         // Arrange players so that I am on south
@@ -56,12 +56,18 @@
         }
         $directions = array( 'S', 'W', 'N', 'E' );
         $this->page->begin_block($template, "playername");
+		$dealer_id = $this->game->getDealerID();
         foreach ( $player_to_dir as $player_id => $info ) {
             $dir = array_shift($directions);
-            $this->page->insert_block("playername", array ("PLAYER_ID" => $player_id,
-                    "PLAYER_NAME" => $players [$player_id] ['player_name'],
-                    "PLAYER_COLOR" => $players [$player_id] ['player_color'],
-                    "DIR" => $dir ));
+			$playname = $players[$player_id]['player_name'];
+			if ($player_id == $dealer_id)
+				$playname .= " (D)";
+            $this->page->insert_block("playername",
+					array (
+						"PLAYER_ID" => $player_id,
+                    	"PLAYER_NAME" => $playname,
+                    	"PLAYER_COLOR" => $players [$player_id] ['player_color'],
+                    	"DIR" => $dir ));
         }
 
         // this will make our My Hand text translatable

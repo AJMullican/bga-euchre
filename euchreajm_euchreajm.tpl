@@ -44,10 +44,7 @@
     <!-- END playername -->
 
     <div class="trumptable whiteblock" id="trumptable">
-        <div class="trumptablename" style="color:#000000">
-        </div>
-        <div class="trumptablecard">
-          <div id="trumptabledealer"></div>
+        <div class="trumptablecard" id="trumptablecard">
         </div>
     </div>
 

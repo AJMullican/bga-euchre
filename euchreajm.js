@@ -29,7 +29,6 @@ function (dojo, declare) {
             // Here, you can init the global variables of your user interface
             // Example:
             // this.myGlobalValue = 0;
-            console.log('hearts constructor');
             this.cardwidth = 72;
             this.cardheight = 96;
         },
@@ -50,7 +49,11 @@ function (dojo, declare) {
         setup: function( gamedatas )
         {
             console.log( "Starting game setup" );
+			console.log(gamedatas);
             
+            var stateId = parseInt(gamedatas.gamestate.id);
+            console.log("AJM stateId: " + stateId);
+
             // Setting up player boards
             for( var player_id in gamedatas.players )
             {
@@ -104,6 +107,8 @@ function (dojo, declare) {
             this.playerHand.image_items_per_row = 13; // 13 images per row
             this.playerHand.centerItems = true;
 
+            this.trumpCard = new ebg.stock(); // new stock object for trump card
+            this.trumpCard.create( this, $('trumptablecard'), this.cardwidth, this.cardheight );
 
             // Create cards types:
             for (var color = 1; color <= 4; color++) {
@@ -111,6 +116,7 @@ function (dojo, declare) {
                     // Build card type id
                     var card_type_id = this.getCardUniqueId(color, value);
                     this.playerHand.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.jpg', card_type_id);
+                    this.trumpCard.addItemType(card_type_id, card_type_id, g_gamethemeurl + 'img/cards.jpg', card_type_id);
                 }
             }
             //  Spades trump
@@ -175,6 +181,7 @@ function (dojo, declare) {
                 var color = card.type;
                 var value = card.type_arg;
                 this.playerHand.addToStockWithId(this.getCardUniqueId(color, value), card.id);
+console.log("AJM card number player_id, id: " + card.location_arg, ", " + card.id);
             }
 
             // Cards played on table
@@ -185,6 +192,19 @@ function (dojo, declare) {
                 var player_id = card.location_arg;
                 this.playCardOnTable(player_id, color, value, card.id);
             }
+
+console.log("AJM about to iCard");
+                for( var iCard in gamedatas.trumptablecard )//there will only ever be one...
+                {
+console.log("AJM iCard: " + iCard);
+                    var c = gamedatas.trumptablecard[iCard];
+                    var suit = parseInt(c.type);
+                    var val = parseInt(c.type_arg);
+                    this.trumpCard.addToStockWithId( this.getCardUniqueId( suit, val ), 1 );
+            //this.trumpCard.addToStockWithId(this.getCardUniqueId(color, value), card.id);
+                }
+/*
+*/
 
             dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
 
@@ -409,6 +429,7 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
         setupNotifications : function() {
             console.log('notifications subscriptions setup');
 
+            dojo.subscribe('dealerChosen', this, "notif_dealerChosen");
             dojo.subscribe('newHand', this, "notif_newHand");
             dojo.subscribe('playCard', this, "notif_playCard");
 
@@ -419,8 +440,15 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
             dojo.subscribe( 'newScores', this, "notif_newScores" );
         },
 
+        notif_dealerChosen : function(notif) {
+            // We received the dealer ID
+			$dealer_id = notif.args.id[0];
+            console.log('AJM notif_dealer_chosen: '+$dealer_id);
+        },
+
         notif_newHand : function(notif) {
-            // We received a new full hand of 13 cards.
+            console.log('AJM notif_newHand');
+            // We received a new full hand of 5 cards.
             this.playerHand.removeAll();
 
             for ( var i in notif.args.cards) {
@@ -432,6 +460,7 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
         },
 
         notif_playCard : function(notif) {
+            console.log('AJM notif_playCard');
             // Play a card on the table
             this.playCardOnTable(notif.args.player_id, notif.args.color, notif.args.value, notif.args.card_id);
         },
@@ -443,6 +472,7 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
         },
 
         notif_giveAllCardsToPlayer : function(notif) {
+            console.log('AJM notif_giveAllCardsToPlayer');
             // Move all cards on table to given table, then destroy them
             var winner_id = notif.args.player_id;
             for ( var player_id in this.gamedatas.players) {

@@ -68,7 +68,7 @@ $machinestates = array(
         "type" => "game",
         "action" => "stNewHand",
         "updateGameProgression" => true,
-        "transitions" => array( "" => 30 )
+        "transitions" => array( "" => 25 )
     ),
 
     21 => array(
@@ -90,6 +90,22 @@ $machinestates = array(
         "transitions" => array( "startHand" => 30, "skip" => 30  )
     ),
 
+	//  Choose first dealer
+    24 => array(
+        "name" => "chooseDealer",
+        "description" => "",
+        "type" => "game",
+        "action" => "stDealerChoose",
+        "transitions" => array( "chooseDealer" => 24,"chooseTrump" => 25  )
+    ),
+
+    25 => array(
+        "name" => "chooseTrump",
+        "description" => "",
+        "type" => "activePlayer",
+        "possibleAactions" => array( "chooseTrump", "trumpChosen" ),
+        "transitions" => array( "chooseTrump" => 25, "pass" => 25  )
+    ),
 
     // Trick
 

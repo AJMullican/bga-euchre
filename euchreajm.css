@@ -79,8 +79,10 @@
 	//margin-top: -64px;
 }
 
-.trumptablecard {
-    position:relative;
+#trumptablecard {
+    position: absolute;
+    width: 72px;
+    height: 96px;
 }
 
 
@@ -106,14 +108,14 @@
 
 #playertables {
     position: relative;
-    text-align: left;
-    left: 0px;
+    //text-align: left;
+    left: 50%;
     top: 0px;
     background-color: green;
     height: 600px;
     width: 480px;
     border-radius: 80px;
-    margin-left: 20px;
+    margin-left: -240px;
     margin-top: 20px;
     border: 16px solid black;
 }

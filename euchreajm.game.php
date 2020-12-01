@@ -36,6 +36,10 @@ class euchreajm extends Table
                    "currentHandType" => 10,
                    "trickColor" => 11,  // Card suit, 1 to 4
                    "alreadyPlayedHearts" => 12,
+				   "dealerID" => 13,
+				   "callerID" => 14,
+				   "trumpColor" => 15,
+				   "leadPlayer" => 16,
         ) );
 
         $this->cards = self::getNew( "module.common.deck" );
@@ -91,6 +95,9 @@ class euchreajm extends Table
         // Set current trick color to zero (= no trick color)
         self::setGameStateInitialValue( 'trickColor', 0 );
 
+		// Set current deadler to 0 (no dealer)
+        self::setGameStateInitialValue( 'dealerID', 0 );
+
   		// Create cards
         $cards = array ();
         foreach ( $this->colors as $color_id => $color )
@@ -99,120 +106,163 @@ class euchreajm extends Table
             for ($value = 9; $value <= 14; $value ++)
 			{
                 //  9, 10, J, Q, K, A
-                $cards [] = array ('type' => $color_id,'type_arg' => $value,'nbr' => 1 );
-            }
-        }
+                  $cards [] = array ('type' => $color_id,'type_arg' => $value,'nbr' => 1 );
+              }
+          }
 
-        $this->cards->createCards( $cards, 'deck' );
+          $this->cards->createCards( $cards, 'deck' );
 
-        // TODO: setup the initial game situation here
+          // TODO: setup the initial game situation here
 
-        // Shuffle deck
-        $this->cards->shuffle('deck');
-        // Deal 5 cards to each player
-        $players = self::loadPlayersBasicInfos();
-        foreach ( $players as $player_id => $player ) {
-            $cards = $this->cards->pickCards(5, 'deck', $player_id);
-        }
+		  //  Choose a random dealer
+self::trace("AJM CALLING (chooseDealer)  dealer choice");
+		  $dealerID = $this->chooseDealer();
 
+    	  $this->gamestate->changeActivePlayer( $dealerID );
+    	  $leadPlayer = $this->activeNextPlayer();
+    	  self::setGameStateValue( 'leadPlayer', $leadPlayer );
 
-        // Activate first player (which is in general a good idea :) )
-        $this->activeNextPlayer();
+          /************ End of the game initialization *****/
+      }
 
-        /************ End of the game initialization *****/
-    }
+      /*
+          getAllDatas:
 
-    /*
-        getAllDatas:
+          Gather all informations about current game situation (visible by the current player).
 
-        Gather all informations about current game situation (visible by the current player).
+          The method is called each time the game interface is displayed to a player, ie:
+          _ when the game starts
+          _ when a player refreshes the game page (F5)
+      */
+      protected function getAllDatas()
+      {
+          $result = array();
 
-        The method is called each time the game interface is displayed to a player, ie:
-        _ when the game starts
-        _ when a player refreshes the game page (F5)
-    */
-    protected function getAllDatas()
-    {
-        $result = array();
+          $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
 
-        $current_player_id = self::getCurrentPlayerId();    // !! We must only return informations visible by this player !!
+          // Get information about players
+          // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
+          $sql = "SELECT player_id id, player_score score FROM player ";
+          $result['players'] = self::getCollectionFromDb( $sql );
 
-        // Get information about players
-        // Note: you can retrieve some extra field you added for "player" table in "dbmodel.sql" if you need it.
-        $sql = "SELECT player_id id, player_score score FROM player ";
-        $result['players'] = self::getCollectionFromDb( $sql );
+          // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
+          // Cards in player hand
+          $result['hand'] = $this->cards->getCardsInLocation( 'hand', $current_player_id );
 
-        // Cards in player hand
-        $result['hand'] = $this->cards->getCardsInLocation( 'hand', $current_player_id );
+          // Cards played on the table
+          $result['cardsontable'] = $this->cards->getCardsInLocation( 'cardsontable' );
 
-        // Cards played on the table
-        $result['cardsontable'] = $this->cards->getCardsInLocation( 'cardsontable' );
+		  // Dealer
+          $result['dealer'] = self::getGameStateValue( 'dealerID' ) ;
 
-        return $result;
-    }
+          // Trump card in the middle
+          $result['trumptablecard'] = $this->cards->getCardsInLocation( 'trumptablecard' );
 
-    /*
-        getGameProgression:
+          return $result;
+      }
 
-        Compute and return the current game progression.
-        The number returned must be an integer beween 0 (=the game just started) and
-        100 (= the game is finished or almost finished).
+      /*
+          getGameProgression:
 
-        This method is called each time we are in a game state with the "updateGameProgression" property set to true
-        (see states.inc.php)
-    */
-    function getGameProgression()
-    {
-        // TODO: compute and return the game progression
+          Compute and return the current game progression.
+          The number returned must be an integer beween 0 (=the game just started) and
+          100 (= the game is finished or almost finished).
 
-        return 0;
-    }
+          This method is called each time we are in a game state with the "updateGameProgression" property set to true
+          (see states.inc.php)
+      */
+      function getGameProgression()
+      {
+          // TODO: compute and return the game progression
+
+          return 0;
+      }
 
 
 //////////////////////////////////////////////////////////////////////////////
 //////////// Utility functions
 ////////////
 
-    /*
-        In this space, you can put any utility methods useful for your game logic
-    */
+      /*
+          In this space, you can put any utility methods useful for your game logic
+      */
 
-  // Return players => direction (N/S/E/W) from the point of view
-  //  of current player (current player must be on south)
-  function getPlayersToDirection()
-  {
-    $result = array();
-
-    $players = self::loadPlayersBasicInfos();
-    $nextPlayer = self::createNextPlayerTable( array_keys( $players ) ); 
-
-    $current_player = self::getCurrentPlayerId();
-
-    $directions = array( 'S', 'W', 'N', 'E' );
-
-    if( ! isset( $nextPlayer[ $current_player ] ) )
+    // Return players => direction (N/S/E/W) from the point of view
+    //  of current player (current player must be on south)
+    function getPlayersToDirection()
     {
-      // Spectator mode: take any player for south
-      $player_id = $nextPlayer[0];
-      $result[ $player_id ] = array_shift( $directions );
-    }
-    else
-    {
-      // Normal mode: current player is on south
-      $player_id = $current_player;
-      $result[ $player_id ] = array_shift( $directions );
+        $result = array();
+
+        $players = self::loadPlayersBasicInfos();
+        $nextPlayer = self::createNextPlayerTable( array_keys( $players ) ); 
+
+        $current_player = self::getCurrentPlayerId();
+
+        $directions = array( 'S', 'W', 'N', 'E' );
+
+        if( ! isset( $nextPlayer[ $current_player ] ) )
+        {
+            // Spectator mode: take any player for south
+            $player_id = $nextPlayer[0];
+            $result[ $player_id ] = array_shift( $directions );
+        }
+        else
+        {
+            // Normal mode: current player is on south
+            $player_id = $current_player;
+            $result[ $player_id ] = array_shift( $directions );
+        }
+
+        while( count( $directions ) > 0 )
+        {
+            $player_id = $nextPlayer[ $player_id ];
+            $result[ $player_id ] = array_shift( $directions );
+        }
+        return $result;
     }
 
-    while( count( $directions ) > 0 )
-    {
-      $player_id = $nextPlayer[ $player_id ];
-      $result[ $player_id ] = array_shift( $directions );
-    }
-    return $result;
-  }
+	function getDealerID()
+	{
+		$dealer_id = self::getGameStateValue('dealerID');
 
+		return $dealer_id;
+	}
+
+	function chooseDealer()
+	{
+	    $dealer_choice =  bga_rand(1, 4);
+
+        $players = self::loadPlayersBasicInfos();
+		$i = 1;
+        foreach ( $players as $player_id => $player ) {
+			if ($i == $dealer_choice)
+				$dealer_id = $player_id;
+			$i++;
+        }
+        self::notifyAllPlayers('dealerChosen', '', array ('id' => $dealer_id ));
+	
+		self::setGameStateValue('dealerID', $dealer_id);
+
+		return $dealer_id;
+	}
+
+
+	function dealCards()
+	{
+        $this->cards->shuffle('deck');
+        // Deal 5 cards to each player
+        // Create deck, shuffle it and give 5 initial cards
+        $players = self::loadPlayersBasicInfos();
+        foreach ( $players as $player_id => $player ) {
+            $cards = $this->cards->pickCards(5, 'deck', $player_id);
+            // Notify player about his cards in case this is not game start
+        	self::notifyPlayer($player_id, 'newHand', '', array ('cards' => $cards ));
+        }
+
+		// Deal 1 card to trump pile
+		$this->cards->pickCardForLocation('deck', 'trumptablecard', 0 );
+	}
 
 
 
@@ -330,15 +380,7 @@ class euchreajm extends Table
     function stNewHand() {
         // Take back all cards (from any location => null) to deck
         $this->cards->moveAllCardsInLocation(null, "deck");
-        $this->cards->shuffle('deck');
-        // Deal 5 cards to each player
-        // Create deck, shuffle it and give 5 initial cards
-        $players = self::loadPlayersBasicInfos();
-        foreach ( $players as $player_id => $player ) {
-            $cards = $this->cards->pickCards(5, 'deck', $player_id);
-            // Notify player about his cards
-            self::notifyPlayer($player_id, 'newHand', '', array ('cards' => $cards ));
-        }
+		$this->dealCards();
         self::setGameStateValue('alreadyPlayedHearts', 0);
         $this->gamestate->nextState("");
     }
