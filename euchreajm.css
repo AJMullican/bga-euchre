@@ -72,7 +72,7 @@
 .trumptable {
     position: relative;
     left: 50%;
-    top: 172px;
+    top: 180px;
     width: 72px;
     height: 96px;
     margin-left: -52px;
@@ -155,12 +155,12 @@
 }
 .playername_W {
     left: 8px;
-    top: 120px;
+    top: 128px;
     //margin-top: -8px; /* half of 16 */
 }
 .playername_E {
     right: 8px;
-    top: 120px;
+    top: 128px;
     //margin-top: -8px; /* half of 16 */
 }
 
@@ -183,12 +183,12 @@
 }
 .playertable_W {
     left: 32px;
-    top: 172px;
+    top: 180px;
     //margin-top: -64px;
 }
 .playertable_E {
     right: 32px;
-    top: 172px;
+    top: 180px;
     //margin-top: -64px;
 }
 
