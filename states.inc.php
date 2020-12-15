@@ -71,40 +71,31 @@ $machinestates = array(
         "transitions" => array( "" => 25 )
     ),
 
-    21 => array(
-        "name" => "giveCards",
-        "description" => clienttranslate('Some players must choose 3 cards to give to ${direction}'),
-        "descriptionmyturn" => clienttranslate('${you} must choose 3 cards to give to ${direction}'),
-        "type" => "multipleactiveplayer",
-        "action" => "stGiveCards",
-        "args" => "argGiveCards",
-        "possibleactions" => array( "giveCards" ),
-        "transitions" => array( "giveCards" => 22, "skip" => 22 )
-    ),
-
-    22 => array(
-        "name" => "takeCards",
-        "description" => "",
-        "type" => "game",
-        "action" => "stTakeCards",
-        "transitions" => array( "startHand" => 30, "skip" => 30  )
-    ),
-
-	//  Choose first dealer
-    24 => array(
-        "name" => "chooseDealer",
-        "description" => "",
-        "type" => "game",
-        "action" => "stDealerChoose",
-        "transitions" => array( "chooseDealer" => 24,"chooseTrump" => 25  )
-    ),
-
     25 => array(
         "name" => "chooseTrump",
+        "description" => clienttranslate('${actplayer} must choose or pass trump'),
+        "descriptionmyturn" => clienttranslate('${you} must choose or pass trump'),
+        "type" => "activeplayer",
+        "possibleactions" => array( "pass" ),
+        "transitions" => array( "nextPlayer" => 32 )
+    ),
+    21 => array(
+        "name" => "playerBid",
+        "description" => clienttranslate('${actplayer} must bid or pass'),
+        "descriptionmyturn" => clienttranslate('${you} must bid or pass'),
+        "type" => "activeplayer",
+        "possibleactions" => array( "bidTrick", "pass" ),
+        "args" => "argsBidding",
+        "transitions" => array( "nextPlayer" => 32 )
+    ),  
+
+	//  Rotate dealer
+    27 => array(
+        "name" => "rotateDealer",
         "description" => "",
-        "type" => "activePlayer",
-        "possibleAactions" => array( "chooseTrump", "trumpChosen" ),
-        "transitions" => array( "chooseTrump" => 25, "pass" => 25  )
+        "type" => "game",
+        "action" => "stRotateDealer",
+        "transitions" => array( "newHand" => 20  )
     ),
 
     // Trick
@@ -129,7 +120,7 @@ $machinestates = array(
         "description" => "",
         "type" => "game",
         "action" => "stNextPlayer",
-        "transitions" => array( "nextPlayer" => 31, "nextTrick" => 30, "endHand" => 40 )
+        "transitions" => array( "chooseTrump" => 25, "nextTrick" => 30, "endHand" => 40 )
     ),
 
 

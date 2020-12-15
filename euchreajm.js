@@ -180,6 +180,7 @@ function (dojo, declare) {
                 var card = this.gamedatas.hand[i];
                 var color = card.type;
                 var value = card.type_arg;
+console.log("AJM hand i, suit, value, id: " + i, color, value, card.id);
                 this.playerHand.addToStockWithId(this.getCardUniqueId(color, value), card.id);
 console.log("AJM card number player_id, id: " + card.location_arg, ", " + card.id);
             }
@@ -193,7 +194,6 @@ console.log("AJM card number player_id, id: " + card.location_arg, ", " + card.i
                 this.playCardOnTable(player_id, color, value, card.id);
             }
 
-console.log("AJM about to iCard");
                 for( var iCard in gamedatas.trumptablecard )//there will only ever be one...
                 {
 console.log("AJM iCard: " + iCard);
@@ -201,10 +201,7 @@ console.log("AJM iCard: " + iCard);
                     var suit = parseInt(c.type);
                     var val = parseInt(c.type_arg);
                     this.trumpCard.addToStockWithId( this.getCardUniqueId( suit, val ), 1 );
-            //this.trumpCard.addToStockWithId(this.getCardUniqueId(color, value), card.id);
                 }
-/*
-*/
 
             dojo.connect( this.playerHand, 'onChangeSelection', this, 'onPlayerHandSelectionChanged' );
 
@@ -278,11 +275,31 @@ console.log("AJM iCard: " + iCard);
         {
             console.log( 'onUpdateActionButtons: '+stateName );
                       
-console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
+			console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
+            console.log( 'onUpdateActionButtons: '+stateName );
+            console.log("current player id: " + this.player_id);
+            console.log("active player id: " + this.getActivePlayerId());
+            if (this.checkAction('pass', true)) {
+				console.log("AJM checkAction pass TRUE");
+			}
+			else {
+				console.log("AJM checkAction pass FALSE");
+			}
+
             if( this.isCurrentPlayerActive() )
             {            
                 switch( stateName )
                 {
+					case 'chooseTrump':
+						this.addActionButton(
+                            'pass_button',
+                            _('Pass'),
+                            'onPlayerPass',
+                            null,
+                            false,
+                            'gray'
+                        ); 
+						break;
 /*               
                  Example:
  
@@ -390,6 +407,25 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
         
         */
 
+        onPlayerPass: function() {
+console.log("AJM onPlayerPass");
+            var action = 'pass';
+            if (this.checkAction('pass', true)) {
+console.log("AJM onPlayerPass TRUE");
+                this.ajaxcall(
+                    '/' + this.game_name + '/' + this.game_name + '/' + 'pass' + '.html',
+                    {
+                        lock: true
+                    },
+                    this,
+                    function(result) {}, function(is_error) {}
+                )
+            }
+			else {
+console.log("AJM onPlayerPass FALSE");
+			}
+        },
+
         onPlayerHandSelectionChanged : function() {
             var items = this.playerHand.getSelectedItems();
 
@@ -406,8 +442,6 @@ console.log("AJM this.isCurrentPlayerActive "+this.isCurrentPlayerActive());
                     });
 
                     this.playerHand.unselectAll();
-                } else if (this.checkAction('giveCards')) {
-                    // Can give cards => let the player select some cards
                 } else {
                     this.playerHand.unselectAll();
                 }

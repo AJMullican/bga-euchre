@@ -95,7 +95,7 @@ class euchreajm extends Table
         // Set current trick color to zero (= no trick color)
         self::setGameStateInitialValue( 'trickColor', 0 );
 
-		// Set current deadler to 0 (no dealer)
+		// Set current dealer to 0 (no dealer)
         self::setGameStateInitialValue( 'dealerID', 0 );
 
   		// Create cards
@@ -113,14 +113,11 @@ class euchreajm extends Table
           $this->cards->createCards( $cards, 'deck' );
 
           // TODO: setup the initial game situation here
+	      $this->chooseDealer();
 
-		  //  Choose a random dealer
-self::trace("AJM CALLING (chooseDealer)  dealer choice");
-		  $dealerID = $this->chooseDealer();
+          // Activate first player (which is in general a good idea :) )
+          $this->activeNextPlayer();
 
-    	  $this->gamestate->changeActivePlayer( $dealerID );
-    	  $leadPlayer = $this->activeNextPlayer();
-    	  self::setGameStateValue( 'leadPlayer', $leadPlayer );
 
           /************ End of the game initialization *****/
       }
@@ -195,7 +192,7 @@ self::trace("AJM CALLING (chooseDealer)  dealer choice");
         $result = array();
 
         $players = self::loadPlayersBasicInfos();
-        $nextPlayer = self::createNextPlayerTable( array_keys( $players ) ); 
+        $nextPlayer = self::createNextPlayerTable( array_keys( $players ) );
 
         $current_player = self::getCurrentPlayerId();
 
@@ -241,9 +238,8 @@ self::trace("AJM CALLING (chooseDealer)  dealer choice");
 			$i++;
         }
         self::notifyAllPlayers('dealerChosen', '', array ('id' => $dealer_id ));
+        self::setGameStateValue('dealerID', $dealer_id);
 	
-		self::setGameStateValue('dealerID', $dealer_id);
-
 		return $dealer_id;
 	}
 
@@ -322,6 +318,25 @@ self::trace("AJM CALLING (chooseDealer)  dealer choice");
         $this->gamestate->nextState('playCard');
     }
 
+    function pass() {
+        self::checkAction('pass');
+        $playerId = self::getActivePlayerId();
+
+        // And notify
+/*
+        self::notifyAllPlayers(
+            'updateBidPass',
+            clienttranslate('${player_name} passes'),
+            [
+                'player_id' => $playerId,
+                'player_name' => self::getActivePlayerName(),
+            ]
+        );
+*/
+
+        // Next player
+        $this->gamestate->nextState('nextPlayer');
+    }
 
 
 //////////////////////////////////////////////////////////////////////////////
@@ -351,10 +366,6 @@ self::trace("AJM CALLING (chooseDealer)  dealer choice");
     }
     */
 
-    function argGiveCards() {
-        return array ();
-    }
-
 //////////////////////////////////////////////////////////////////////////////
 //////////// Game state actions
 ////////////
@@ -382,6 +393,12 @@ self::trace("AJM CALLING (chooseDealer)  dealer choice");
         $this->cards->moveAllCardsInLocation(null, "deck");
 		$this->dealCards();
         self::setGameStateValue('alreadyPlayedHearts', 0);
+
+		$dealer_id = $this->getDealerID();
+        $this->gamestate->changeActivePlayer( $dealer_id );
+        $leadPlayer = $this->activeNextPlayer();
+        self::setGameStateValue( 'leadPlayer', $leadPlayer );
+
         $this->gamestate->nextState("");
     }
 
@@ -442,7 +459,7 @@ self::trace("AJM IN (stNextPlayer)  active player: " . $best_value_player_id . "
             $player_id = self::activeNextPlayer();
 self::trace("AJM IN (stNextPlayer)  active player: " . $player_id . "----");
             self::giveExtraTime($player_id);
-            $this->gamestate->nextState('nextPlayer');
+            $this->gamestate->nextState('chooseTrump');
         }
     }
 
